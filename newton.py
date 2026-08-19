@@ -16,8 +16,7 @@ def derivative(x, fun):
         An approximation of fun'(x), computed as
         (fun(x + h) - fun(x)) / h, with h = 1e-6.
     """
-    result = (fun(x + 1e-6) - fun(x))/1e-6
-    return result
+    return (fun(x+1e-6) - fun(x)) / 1e-6
 
 
 def second_derivative(x, fun):
@@ -38,8 +37,7 @@ def second_derivative(x, fun):
         An approximation of fun''(x), computed as
         (fun(x + h) - 2*fun(x) + fun(x - h)) / h^2, with h = 1e-6.
     """
-    result = (fun(x + 1e-6) - 2 * fun(x) + fun(x - 1e-6)) / ((1e-6) ** 2)
-    return result
+    return (derivative(x+  1e-6, fun) - derivative(x, fun)) / 1e-6
 
 
 def optimize(start, fun):
