@@ -74,8 +74,7 @@ def optimize(start, fun):
     """
     x_old = start
     x_new = x_old - derivative(x_old, fun) / second_derivative(x_old, fun)
-    while(abs(x_new - x_old) > 1e-6):
-        temp = x_new
+    while abs(x_new - x_old) > 1e-6:
+        x_old = x_new
         x_new = x_old - derivative(x_old, fun) / second_derivative(x_old, fun)
-        x_old = temp
     return x_new
