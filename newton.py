@@ -1,44 +1,5 @@
-def derivative(x, fun):
-    """
-    Approximate the first derivative of a function at a point using
-    the forward difference method.
-
-    Parameters
-    ----------
-    x : float
-        The point at which to evaluate the derivative.
-    fun : callable
-        A function of a single variable, fun(x), to differentiate.
-
-    Returns
-    -------
-    float
-        An approximation of fun'(x), computed as
-        (fun(x + h) - fun(x)) / h, with h = 1e-6.
-    """
-    return (fun(x+1e-6) - fun(x)) / 1e-6
-
-
-def second_derivative(x, fun):
-    """
-    Approximate the second derivative of a function at a point using
-    the central difference method.
-
-    Parameters
-    ----------
-    x : float
-        The point at which to evaluate the second derivative.
-    fun : callable
-        A function of a single variable, fun(x), to differentiate.
-
-    Returns
-    -------
-    float
-        An approximation of fun''(x), computed as
-        (fun(x + h) - 2*fun(x) + fun(x - h)) / h^2, with h = 1e-6.
-    """
-    return (derivative(x+  1e-6, fun) - derivative(x, fun)) / 1e-6
-
+import jax
+import numpy as np
 
 def optimize(start, fun):
     """
@@ -70,9 +31,11 @@ def optimize(start, fun):
     - No check is made for a zero or near-zero second derivative,
       which could cause a division by zero or numerical instability.
     """
+    grad_f = jax.grad(fun)
+    hess_f = jax.hessian(fun)
     x_old = start
-    x_new = x_old - derivative(x_old, fun) / second_derivative(x_old, fun)
-    while abs(x_new - x_old) > 1e-6:
+    x_new = x_old - np.linalg.solve(hess_f(x_old), grad_f(x_old))
+    while np.linalg.norm(x_old - x_new, ord=1) > 1e-6:
         x_old = x_new
-        x_new = x_old - derivative(x_old, fun) / second_derivative(x_old, fun)
+        x_new = x_old - np.linalg.solve(hess_f(x_old), grad_f(x_old))
     return x_new
